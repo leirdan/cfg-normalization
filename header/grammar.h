@@ -22,6 +22,8 @@ class Grammar{
         void addProduction(string A, vector<string> rhs);
         void removeProduction(string A, vector<string> rhs);
         set<vector<string>> getProductions(string A);
+        string getStartSymbol(){return startSymbol;}
+        void setStartSymbol(string A){this->startSymbol = A;}
         void print(ostream &out);
         Grammar clone() const;
 };

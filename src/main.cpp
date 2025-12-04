@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include "../header/grammar.h"
+#include "../header/chomskyNormalizer.h"
 
 int main() {
     ofstream file("grammar.txt");
@@ -31,5 +32,10 @@ int main() {
 
     cout << "\nGramática original (para conferir que não mudou):\n";
     g.print(file);
+
+    ChomskyNormalizer normalizer(g);
+    Grammar v2 = normalizer.removeRecursionAtBeginning();
+    v2.print(cout);
+
     return 0;
 }
