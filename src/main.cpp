@@ -3,7 +3,7 @@
 #include "../header/grammar.h"
 
 int main() {
-    ofstream file("../grammar.txt");
+    ofstream file("grammar.txt");
 
     Grammar g("S", { "a", "b" });
 
