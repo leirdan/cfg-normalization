@@ -1,4 +1,4 @@
-#include "../include/grammar.h"
+#include "../header/grammar.h"
 
 Grammar::Grammar() {
   this->terminals = {};

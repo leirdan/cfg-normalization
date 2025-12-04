@@ -1,6 +1,6 @@
 #include <fstream>
 #include <iostream>
-#include "../include/grammar.h"
+#include "../header/grammar.h"
 
 int main() {
     ofstream file("../grammar.txt");
