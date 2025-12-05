@@ -11,7 +11,9 @@ int main() {
     g.addProduction("S", {"a", "S", "b"});
     g.addProduction("S", {"a", "b"});
     g.addProduction("S", {"b"});
+    g.addProduction("C", {"&"});
     g.addProduction("A", {"b"});
+    g.addProduction("B", {"&"});
 
     cout << "Gramática original:\n";
     g.print(cout);
@@ -36,6 +38,8 @@ int main() {
     ChomskyNormalizer normalizer(g);
     Grammar v2 = normalizer.removeRecursionAtBeginning();
     v2.print(cout);
+
+    Grammar v3 = normalizer.removeLambdaProductions();
 
     return 0;
 }

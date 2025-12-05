@@ -18,8 +18,8 @@ public:
 
     Grammar removeRecursionAtBeginning();
     Grammar removeLambdaProductions();
+    set<string> findVoidableVariables();
     Grammar removeUselessSymbols();
-
     Grammar toChomskyNormalForm();
 
     /*

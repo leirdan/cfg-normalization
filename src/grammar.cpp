@@ -13,6 +13,7 @@ Grammar::Grammar(string startSymbol, set<string> terminals) {
 
 void Grammar::addProduction(string A, vector<string> rhs){
   productions[A].insert(rhs);
+  variables.insert(A);
 }
 
 void Grammar::removeProduction(string A, vector<string> rhs){

@@ -13,6 +13,7 @@ using namespace std;
 class Grammar{
     private:
         set<string> terminals;
+        set<string> variables;
         string startSymbol;
         map<string, set<vector<string>>> productions;
     public:
@@ -21,11 +22,14 @@ class Grammar{
 
         void addProduction(string A, vector<string> rhs);
         void removeProduction(string A, vector<string> rhs);
-        set<vector<string>> getProductions(string A);
-        string getStartSymbol(){return startSymbol;}
-        void setStartSymbol(string A){this->startSymbol = A;}
         void print(ostream &out);
         Grammar clone() const;
+
+        set<vector<string>> getProductions(string A);
+        string getStartSymbol(){return startSymbol;}
+        set<string> getVariables(){return variables;}
+
+        void setStartSymbol(string A){this->startSymbol = A;}
 };
 
 #endif
