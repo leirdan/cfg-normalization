@@ -18,10 +18,12 @@ public:
 
     Grammar removeRecursionAtBeginning();
     Grammar removeLambdaProductions();
-    Grammar removeLambdaProductions2();
     set<string> findVoidableVariables();
+    Grammar removeUnitProductions();
     Grammar removeUselessSymbols();
     Grammar toChomskyNormalForm();
+    set<string> findVariableChain(string& A);
+    set<string> findUnitProductionsVar(string& A);
 
     /*
     na main:

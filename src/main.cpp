@@ -114,5 +114,31 @@ int main() {
     cout << "\nRemovendo regras-lambda: " << endl;
     g4v3.print(cout);
 
+    cout << "-------------------------------------------------------------" << endl;
+
+    Grammar g5("S", { "a", "b", "c", "d"});
+
+    g5.addProduction("S", {"a", "S"});
+    g5.addProduction("S", {"b"});
+    g5.addProduction("S", {"A"});
+    g5.addProduction("A", {"a", "A"});
+    g5.addProduction("A", {"a"});
+    g5.addProduction("A", {"C"});
+    g5.addProduction("B", {"a"});
+    g5.addProduction("B", {"b"});
+    g5.addProduction("C", {"c"});
+    g5.addProduction("C", {"B"});
+    g5.addProduction("D", {"d", "D"});
+    g5.addProduction("D", {"B"});
+
+    cout << "Gramática original:\n";
+    g5.print(cout);
+
+    ChomskyNormalizer normalizer5(g5);
+    Grammar g5v2 = normalizer5.removeUnitProductions();
+    cout << "\nRemovendo regras unitarias: " << endl;
+    g5v2.print(cout);
+
+
     return 0;
 }

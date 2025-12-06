@@ -164,3 +164,80 @@ Grammar ChomskyNormalizer::removeLambdaProductions(){
 
   return g;
 }
+
+set<string> ChomskyNormalizer::findUnitProductionsVar(string& A){
+  Grammar g = this->grammar.clone();
+  set<vector<string>> productionsA = g.getProductions(A);
+  set<string> unitProductionsA;
+
+  for(vector<string> rhs : productionsA){
+    if((int)rhs.size() == 1){
+      set<string> variables = g.getVariables();
+      if(variables.count(rhs[0])){
+        unitProductionsA.insert(rhs[0]);
+        //cout << "Producao unitaria de " << A << " : " << rhs[0] << endl;
+      }
+    }
+  }
+
+  return unitProductionsA;
+}
+
+set<string> ChomskyNormalizer::findVariableChain(string& A){
+  set<string> chainA = {A};
+  set<string> prev;
+
+  do{
+    set<string> newVars;
+    for(string v : chainA){
+      if(!prev.count(v)){
+        newVars.insert(v);
+      }
+    }
+    prev = chainA;
+    for(string B : newVars){
+      set<string> unitProductionsB = findUnitProductionsVar(B);
+      for(string unitProd : unitProductionsB){
+        chainA.insert(unitProd);
+      }
+    }
+  } while (chainA != prev);
+
+  return chainA;
+}
+
+Grammar ChomskyNormalizer::removeUnitProductions(){
+  Grammar g = this->grammar.clone();
+  Grammar result = this->grammar.clone();
+  set<string> variables = g.getVariables();
+
+  for(string A : variables){
+    set<string> unitProductionsA = findUnitProductionsVar(A);
+    if((int)unitProductionsA.size() == 0){
+      continue;
+    }
+    // add new productions
+    set<string> chainA = findVariableChain(A);
+
+    for(string B : chainA){
+      for(vector<string> production : g.getProductions(B)){
+        if (!(production.size() == 1 && g.isVariable(production[0]))) {
+            result.addProduction(A, production);
+        }
+      }
+    }
+  }
+  // remove unit productions
+  for(string A : variables){
+    vector<vector<string>> toRemove;
+    for (auto prod : result.getProductions(A)) {
+        if (prod.size() == 1 && result.isVariable(prod[0])) {
+            toRemove.push_back(prod);
+        }
+    }
+    for (auto prod : toRemove)
+        result.removeProduction(A, prod);
+  }
+
+  return result;
+}
