@@ -3,5 +3,6 @@ CMakeLists.txt
 .idea/*
 .vscode/*
 obj/*.o
-bin/main.exe
+bin/main
+bin
 grammar.txt
