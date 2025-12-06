@@ -139,6 +139,11 @@ int main() {
     cout << "\nRemovendo regras unitarias: " << endl;
     g5v2.print(cout);
 
+    Grammar g5v3 = normalizer5.removeUselessSymbols();
+    cout << "\nRemovendo variaveis inuteis: " << endl;
+    g5v3.print(cout);
+
+
     cout << "-------------------------------------------------------------" << endl;
 
     Grammar g6("S", { "a", "b", "c", "d"});
@@ -153,9 +158,14 @@ int main() {
     g6.print(cout);
 
     ChomskyNormalizer normalizer6(g6);
-    Grammar g6v2 = normalizer5.removeUnitProductions();
+    Grammar g6v2 = normalizer6.removeUnitProductions();
     cout << "\nRemovendo regras unitarias: " << endl;
     g6v2.print(cout);
+
+    ChomskyNormalizer normalizer7(g6v2);
+    Grammar g6v3 = normalizer7.removeUselessSymbols();
+    cout << "\nRemovendo variaveis inuteis: " << endl;
+    g6v3.print(cout);
 
 
     return 0;

@@ -24,6 +24,7 @@ public:
     Grammar toChomskyNormalForm();
     set<string> findVariableChain(string& A);
     set<string> findUnitProductionsVar(string& A);
+    set<string> getTerm();
 
     /*
     na main:
