@@ -18,6 +18,7 @@ public:
     Grammar();
     Grammar(string startSymbol, set<string> terminals);
 
+    void addVariable(string A);
     void addProduction(string A, vector<string> rhs);
     void removeProduction(string A, vector<string> rhs);
     void print(ostream &out);
@@ -25,8 +26,9 @@ public:
     Grammar clone() const;
 
     set<vector<string>> getProductions(string A);
-    string getStartSymbol(){return startSymbol;}
-    set<string> getVariables(){return variables;}
+    set<string> getTerminals() { return terminals; }
+    string getStartSymbol() { return startSymbol; }
+    set<string> getVariables() { return variables; }
 
     void setStartSymbol(string A){this->startSymbol = A;}
 };
