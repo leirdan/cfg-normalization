@@ -27,7 +27,7 @@ public:
     set<vector<string>> getProductions(string A);
     string getStartSymbol(){return startSymbol;}
     set<string> getVariables(){return variables;}
-
+    
     void setStartSymbol(string A){this->startSymbol = A;}
 };
 
