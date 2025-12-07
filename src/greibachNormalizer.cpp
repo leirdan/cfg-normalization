@@ -1,69 +1,137 @@
 #include "../header/greibachNormalizer.h"
 #include <hash_map>
+#include <algorithm>
 
-Grammar *GreibachNormalizer::renameVariables(const Grammar *g)
+void GreibachNormalizer::renameVariables()
 {
-    Grammar original_grammar = g->clone();
-    Grammar *new_grammar = new Grammar("V1", original_grammar.getTerminals());
-
-    // Criando nova ordem de variáveis
-
-    map<string, string> variables_map; // Map para relacionar as variáveis atuais com as novas
-    int idx = 2;                       // 1 é reservado para S
-    auto old_variables = original_grammar.getVariables();
-
-    // Primeiro converte as variáveis
-    for (auto v = old_variables.begin(); v != old_variables.end(); ++v)
+    int index = 2;
+    for (auto v : this->grammar.getVariables())
     {
-        auto var = *v;
-        if (var == "S")
+        if (v == "S")
         {
-            variables_map.insert({var, "V1"});
-            new_grammar->addVariable("V1");
+            this->order.insert({"S", 1});
         }
         else
         {
-            variables_map.insert({var, "V" + to_string(idx)});
-            new_grammar->addVariable(variables_map[var]);
-            idx++;
+            this->order.insert({v, index});
+            index++;
         }
     }
-
-    // Conversão das produções para a específica.
-    for (auto v = old_variables.begin(); v != old_variables.end(); ++v)
-    {
-        set<vector<string>> productions = original_grammar.getProductions(*v);
-
-        // Para cada produção, mapeia para as variáveis do map e, ao final, adiciona na nova gramática.
-        for (auto p : productions)
-        {
-            vector<string> new_rhs;
-            for (auto rule : p)
-            {
-                for (auto it = rule.begin(); it != rule.end(); it++)
-                {
-                    string symbol;
-                    symbol.push_back(*it);
-                    if (original_grammar.isVariable(symbol))
-                    {
-                        new_rhs.push_back(variables_map[symbol]);
-                    }
-                    else
-                    {
-                        new_rhs.push_back(symbol);
-                    }
-                }
-            }
-
-            new_grammar->addProduction(variables_map[*v], new_rhs);
-        }
-        // cout << new_gramar;
-    }
-    return new_grammar;
 }
 
-Grammar *GreibachNormalizer::normalize(const Grammar &g)
+bool GreibachNormalizer::hasOrder()
 {
-    Grammar *grammar = this->renameVariables(&g);
-    return grammar;
+    for (auto k : this->grammar.getVariables())
+    {
+        for (vector<string> p : this->grammar.getProductions(k))
+        {
+            string first_var = p.front();
+
+            if (this->grammar.isVariable(first_var))
+            {
+                if (order[first_var] < order[k])
+                {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+void GreibachNormalizer::applyRuleOrderConstraint()
+{
+    while (!this->hasOrder())
+    {
+        // Analisaremos cada regra de cada variável para ver se está no padrão.
+        for (auto k : this->grammar.getVariables())
+        {
+            for (auto p : this->grammar.getProductions(k))
+            {
+                string j = p.front();
+                // Se começa com terminal ou se a regra Ak -> Aj tem j > k,
+                // já está seguindo a ordem.
+                if (!this->grammar.isVariable(j) || order[j] > order[k])
+                {
+                    continue;
+                }
+                else if (order[j] < order[k])
+                {
+                    this->replace(k, j);
+                }
+                else
+                { // Aplica remoção de recursão à esquerda
+                }
+            }
+        }
+    }
+}
+
+void GreibachNormalizer::replace(string lhs, string vRhs)
+{
+    set<vector<string>> to_remove;
+    set<vector<string>> to_add;
+
+    auto current_productions = this->grammar.getProductions(lhs);
+    auto replacer_productions = this->grammar.getProductions(vRhs);
+
+    for (const auto &p : current_productions)
+    {
+        if (!p.empty() && p.front() == vRhs)
+        {
+            to_remove.insert(p);
+
+            // extrai o resto da regra para além da 1a variábel
+            vector<string> beta;
+            if (p.size() > 1)
+            {
+                beta.assign(p.begin() + 1, p.end());
+            }
+
+            // para cada regra de A_j, adicionamos em A_k seguido do beta
+            for (const auto &replacer_rhs : replacer_productions)
+            {
+                vector<string> new_rhs = replacer_rhs;
+                new_rhs.insert(new_rhs.end(), beta.begin(), beta.end());
+                to_add.insert(new_rhs);
+            }
+        }
+    }
+
+    // aplica as mudanças
+    for (const auto &prod : to_remove)
+        this->grammar.removeProduction(lhs, prod);
+    for (const auto &prod : to_add)
+        this->grammar.addProduction(lhs, prod);
+}
+
+void GreibachNormalizer::replaceBackwards()
+{
+    auto variables = this->grammar.getVariables();
+    for (auto v = variables.rbegin(); v != variables.rend(); v++)
+    {
+        for (auto p : this->grammar.getProductions(*v))
+        {
+            string j = p.front();
+            string k = *v;
+
+            if (!this->grammar.isVariable(j))
+            {
+                continue;
+            }
+            else if (order[j] > order[k])
+            {
+                this->replace(k, j); // Forçar com que todas as regras de k que iniciam com j iniciem com terminais
+            }
+        }
+    }
+}
+
+Grammar *GreibachNormalizer::normalize()
+{
+    this->renameVariables();          // OK
+    this->applyRuleOrderConstraint(); // OK
+    this->replaceBackwards();
+
+    return &grammar;
 }
