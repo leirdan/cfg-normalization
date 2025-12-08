@@ -46,6 +46,7 @@ set<vector<string>> Grammar::getProductions(string A)
 
 void Grammar::print(ostream &out){
   bool aux = true;
+  out << "Gramática atual... \n";
   
   out << "Terminais: <";
   for (auto t : terminals) {
