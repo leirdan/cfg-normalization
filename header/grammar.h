@@ -6,15 +6,37 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <unordered_map>
 using namespace std;
 
 class Grammar
 {
 private:
     set<string> terminals;
-    set<string> variables; // TODO: trocar pra vector mesmo pra manter uma ordenação personalizada
+    set<string> variables;
+    unordered_map<string, int> order; // Para marcar a ordem de cada vértice
+    int next_order;                   // FIXME: temp?
     string startSymbol;
     map<string, set<vector<string>>> productions;
+
+    // GREIBACH
+    void renameVariables();
+    bool respectGreibachOrder();
+    void replace(string lhs, string vRhs);
+    void replaceBackwards();
+    void applyRuleOrderConstraint();
+    void removeLeftRecursionGreibach(string lhs);
+
+    // CHOMKSY
+    void removeRecursionAtBeginning();
+    set<string> findVoidableVariables();
+    void removeLambdaProductions();
+    void removeUnitProductions();
+    void removeUselessSymbols();
+    set<string> findVariableChain(string &A);
+    set<string> findUnitProductionsVar(string &A);
+    set<string> getTerm();
+    set<string> getReach();
 
 public:
     Grammar();
@@ -25,16 +47,17 @@ public:
     void removeProduction(string A, vector<string> rhs);
     void clearProductions(string A);
     void print(ostream &out);
-    bool isVariable(const string& symbol) const;
-    void removeVariable(const string& A);
+    bool isVariable(const string &symbol) const;
+    void removeVariable(const string &A);
     Grammar clone() const;
+    void toChomskyNormalForm();
+    void toGreibachNormalForm();
 
     set<vector<string>> getProductions(string A);
     set<string> getTerminals() { return terminals; }
     string getStartSymbol() { return startSymbol; }
     set<string> getVariables() { return variables; }
     void setVariables(set<string> v) { this->variables = v; }
-
     void setStartSymbol(string A) { this->startSymbol = A; }
 };
 
