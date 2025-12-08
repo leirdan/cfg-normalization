@@ -1,5 +1,8 @@
 #include "../header/greibachNormalizer.h"
 #include "../header/chomskyNormalizer.h"
+#include "../header/logger.h"
+#include <iostream>
+#include <algorithm>
 
 vector<string> getSortedVariables(unordered_map<string, int> map)
 {
@@ -14,6 +17,7 @@ vector<string> getSortedVariables(unordered_map<string, int> map)
 
 void GreibachNormalizer::renameVariables()
 {
+    Logger::log() << "Numerando em ordem as variáveis da gramática. \n";
     this->next_order = 2;
     auto start = this->grammar.getStartSymbol();
     this->order[start] = 1;
@@ -28,6 +32,11 @@ void GreibachNormalizer::renameVariables()
 
     auto sortedVariables = getSortedVariables(this->order);
     this->sortedVarList = sortedVariables;
+
+    for (auto v : this->sortedVarList)
+    {
+        Logger::log() << v << ": " << order[v] << "\n";
+    }
 }
 
 bool GreibachNormalizer::hasOrder()
@@ -52,6 +61,7 @@ bool GreibachNormalizer::hasOrder()
 
 void GreibachNormalizer::removeLeftRecursionGreibach(string lhs)
 {
+    Logger::log() << "Faremos a remoção das regras com recursão à esquerda em " << lhs << ".\n";
     set<vector<string>> productionsA = this->grammar.getProductions(lhs);
     vector<vector<string>> recursive;
     vector<vector<string>> non_recursive;
@@ -80,6 +90,8 @@ void GreibachNormalizer::removeLeftRecursionGreibach(string lhs)
         this->order[new_lhs] = this->next_order++;
         this->sortedVarList.push_back(new_lhs);
 
+        Logger::log() << "Nova variável introduzida: " << new_lhs << "\n";
+
         // Criar agora as regras recursivas
         for (auto beta : recursive)
         {
@@ -98,13 +110,25 @@ void GreibachNormalizer::removeLeftRecursionGreibach(string lhs)
             ogRec.push_back(new_lhs);
             this->grammar.addProduction(lhs, ogRec); // A -> a | aA'
         }
+
+        Logger::log() << "Atualizada numeração das variáveis da gramática. \n";
+        for (auto v : sortedVarList)
+        {
+            Logger::log() << v << ": " << order[v] << "\n";
+        }
     }
+
+    grammar.print(Logger::log());
 }
 
 void GreibachNormalizer::applyRuleOrderConstraint()
 {
+    grammar.print(Logger::log());
+
     while (!this->hasOrder())
     {
+        Logger::log() << "======================================================\n";
+        Logger::log() << "Gramática ainda não está na Forma Normal de Greibach. \n";
         // Analisaremos cada regra de cada variável para ver se está no padrão.
         for (auto k : this->sortedVarList)
         {
@@ -132,6 +156,7 @@ void GreibachNormalizer::applyRuleOrderConstraint()
 
 void GreibachNormalizer::replace(string lhs, string vRhs)
 {
+    Logger::log() << "Faremos a substituição de " << vRhs << " em " << lhs << ".\n";
     set<vector<string>> to_remove;
     set<vector<string>> to_add;
 
@@ -166,8 +191,11 @@ void GreibachNormalizer::replace(string lhs, string vRhs)
         this->grammar.removeProduction(lhs, prod);
     for (const auto &prod : to_add)
         this->grammar.addProduction(lhs, prod);
+
+    grammar.print(Logger::log());
 }
 
+// TODO: adicionar logs aqui tbm
 void GreibachNormalizer::replaceBackwards()
 {
     auto variables = this->sortedVarList;
@@ -192,12 +220,11 @@ void GreibachNormalizer::replaceBackwards()
 
 Grammar *GreibachNormalizer::normalize()
 {
+    Logger::log() << "Iniciando a normalização para Forma Normal de Greibach!\n";
     this->renameVariables();
     this->applyRuleOrderConstraint();
     this->replaceBackwards();
     // Step 4 não parece mais necessário agora...
-
-    grammar.print(cout);
 
     return &grammar;
 }

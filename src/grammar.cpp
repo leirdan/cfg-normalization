@@ -48,9 +48,19 @@ set<vector<string> > Grammar::getProductions(string A)
     return set<vector<string> >();
 }
 
-void Grammar::print(ostream &out)
-{
-    bool aux = true;
+void Grammar::print(ostream &out){
+  bool aux = true;
+  out << "Gramática atual... \n";
+  
+  out << "Terminais: <";
+  for (auto t : terminals) {
+    if (!aux) {
+      out << ", ";
+    }
+    aux = false;
+    out << t;
+  }
+  out << ">\n";
 
     auto startGrammar = productions.find(startSymbol);
     if (startGrammar != productions.end())
