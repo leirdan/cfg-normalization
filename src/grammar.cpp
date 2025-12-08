@@ -30,7 +30,13 @@ void Grammar::removeProduction(string A, vector<string> rhs)
   }
 }
 
-set<vector<string>> Grammar::getProductions(string A){
+void Grammar::clearProductions(string A)
+{
+  productions.erase(A);
+}
+
+set<vector<string>> Grammar::getProductions(string A)
+{
   auto it = productions.find(A);
   if (it != productions.end()) {
     return it->second;
