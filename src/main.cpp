@@ -19,13 +19,22 @@ void printProducions(Grammar &g)
     cout << endl;
 }
 
+void callFuncions(Grammar g)
+{
+    g.print(cout);
+
+    g.toChomskyNormalForm();
+    cout << "\nFNCl: " << endl;
+    g.print(cout);
+}
+
 int main()
 {
     ofstream file("grammar.txt");
 
-    Logger::setStream(&cout); // temp, depois passa file
-
     Grammar g("S", {"a", "b"});
+
+    g.addProduction("S", {"S"});
     g.addProduction("S", {"A", "B", "C"});
     g.addProduction("A", {"a", "A"});
     g.addProduction("A", {"&"});
@@ -34,16 +43,7 @@ int main()
     g.addProduction("C", {"c", "C"});
     g.addProduction("C", {"&"});
 
-    cout << "Gramática original:\n";
-    g.print(Logger::log());
-
-    g.removeRecursionAtBeginning();
-    cout << "\nRemovendo recursao inicial: " << endl;
-    g.print(Logger::log());
-
-    g.removeLambdaProductions();
-    cout << "\nRemovendo regras-lambda: " << endl;
-    g.print(Logger::log());
+    callFuncions(g);
 
     cout << "-------------------------------------------------------------" << endl;
 
@@ -56,16 +56,7 @@ int main()
     g2.addProduction("C", {"a", "b", "a"});
     g2.addProduction("C", {"&"});
 
-    cout << "Gramática original:\n";
-    g2.print(Logger::log());
-
-    g2.removeRecursionAtBeginning();
-    cout << "\nRemovendo recursao inicial: " << endl;
-    g2.print(Logger::log());
-
-    g2.removeLambdaProductions();
-    cout << "\nRemovendo regras-lambda: " << endl;
-    g2.print(Logger::log());
+    callFuncions(g2);
 
     cout << "-------------------------------------------------------------" << endl;
 
@@ -80,16 +71,7 @@ int main()
     g3.addProduction("C", {"b"});
     g3.addProduction("C", {"A"});
 
-    cout << "Gramática original:\n";
-    g3.print(Logger::log());
-
-    g3.removeRecursionAtBeginning();
-    cout << "\nRemovendo recursao inicial: " << endl;
-    g3.print(Logger::log());
-
-    g3.removeLambdaProductions();
-    cout << "\nRemovendo regras-lambda: " << endl;
-    g3.print(Logger::log());
+    callFuncions(g3);
 
     cout << "-------------------------------------------------------------" << endl;
 
@@ -104,16 +86,7 @@ int main()
     g4.addProduction("C", {"a", "B", "C"});
     g4.addProduction("C", {"a", "B"});
 
-    cout << "Gramática original:\n";
-    g4.print(Logger::log());
-
-    g4.removeRecursionAtBeginning();
-    cout << "\nRemovendo recursao inicial: " << endl;
-    g4.print(Logger::log());
-
-    g4.removeLambdaProductions();
-    cout << "\nRemovendo regras-lambda: " << endl;
-    g4.print(Logger::log());
+    callFuncions(g4);
 
     cout << "-------------------------------------------------------------" << endl;
 
@@ -132,12 +105,7 @@ int main()
     g5.addProduction("D", {"d", "D"});
     g5.addProduction("D", {"B"});
 
-    cout << "Gramática original:\n";
-    g5.print(Logger::log());
-
-    g5.removeUnitProductions();
-    cout << "\nRemovendo regras unitarias: " << endl;
-    g5.print(Logger::log());
+    callFuncions(g5);
 
     cout << "-------------------------------------------------------------" << endl;
 
@@ -149,18 +117,29 @@ int main()
     g6.addProduction("C", {"D"});
     g6.addProduction("D", {"d"});
 
-    cout << "Gramática original:\n";
-    g6.print(Logger::log());
+    callFuncions(g6);
 
-    g6.removeUnitProductions();
-    cout << "\nRemovendo regras unitarias: " << endl;
-    g6.print(Logger::log());
+    cout << "-------------------------------------------------------------" << endl;
 
-    // g.addProduction("S", {"A", "A"});
-    // g.addProduction("S", {"a"});
-    // g.addProduction("A", {"S", "A"});
-    // g.addProduction("A", {"b"});
-    // g.toGreibachNormalForm();
+    Grammar g7("S", {"a", "b", "c"});
 
+    g7.addProduction("S", {"A", "C"});
+    g7.addProduction("S", {"B", "S"});
+    g7.addProduction("S", {"B"});
+    g7.addProduction("A", {"a", "A"});
+    g7.addProduction("A", {"a", "F"});
+    g7.addProduction("B", {"C", "F"});
+    g7.addProduction("B", {"b"});
+    g7.addProduction("C", {"c", "C"});
+    g7.addProduction("C", {"D"});
+    g7.addProduction("D", {"a", "D"});
+    g7.addProduction("D", {"B", "D"});
+    g7.addProduction("D", {"C"});
+    g7.addProduction("E", {"a", "A"});
+    g7.addProduction("E", {"B", "S", "A"});
+    g7.addProduction("F", {"b", "B"});
+    g7.addProduction("F", {"b"});
+
+    callFuncions(g7);
     return 0;
 }
