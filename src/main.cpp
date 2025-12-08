@@ -2,13 +2,17 @@
 #include <iostream>
 #include "../header/grammar.h"
 #include "../header/chomskyNormalizer.h"
+#include "../header/logger.h"
 
-void printProducions(Grammar& g){
+void printProducions(Grammar &g)
+{
     cout << "\nProduções de \"S\" obtidas por getProductions:\n";
     auto prodsS = g.getProductions("S");
-    for (const auto& rhs : prodsS) {
+    for (const auto &rhs : prodsS)
+    {
         cout << "  S ->";
-        for (const auto& sym : rhs) {
+        for (const auto &sym : rhs)
+        {
             cout << " \"" << sym << "\"";
         }
         cout << endl;
@@ -16,10 +20,20 @@ void printProducions(Grammar& g){
     cout << endl;
 }
 
-int main() {
+int main()
+{
     ofstream file("grammar.txt");
 
-    Grammar g("S", { "a", "b"});
+    Logger::setStream(&cout); // temp, depois passa file
+
+    Grammar g("S", {"a", "b"});
+    g.addProduction("S", {"A", "A"});
+    g.addProduction("S", {"a"});
+    g.addProduction("A", {"S", "A"});
+    g.addProduction("A", {"b"});
+    g.toGreibachNormalForm();
+
+    /*
 
     g.addProduction("S", {"A", "B", "C"});
     g.addProduction("A", {"a", "A"});
@@ -157,7 +171,7 @@ int main() {
     Grammar g6v2 = normalizer5.removeUnitProductions();
     cout << "\nRemovendo regras unitarias: " << endl;
     g6v2.print(cout);
-
+    */
 
     return 0;
 }
