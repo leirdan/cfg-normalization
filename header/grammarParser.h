@@ -9,7 +9,8 @@
 
 using namespace std;
 
-class GrammarParser {
+class GrammarParser
+{
 public:
     Grammar parserFromFile(string filename);
 };

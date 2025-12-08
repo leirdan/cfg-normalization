@@ -3,6 +3,7 @@
 
 #include "grammar.h"
 #include <unordered_map>
+#include <algorithm>
 
 class GreibachNormalizer
 {
