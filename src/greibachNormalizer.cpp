@@ -1,7 +1,5 @@
 #include "../header/greibachNormalizer.h"
 #include "../header/chomskyNormalizer.h"
-#include <hash_map>
-#include <algorithm>
 
 vector<string> getSortedVariables(unordered_map<string, int> map)
 {

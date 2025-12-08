@@ -9,12 +9,13 @@
 #include <algorithm>
 #include "grammar.h"
 
-class ChomskyNormalizer {
+class ChomskyNormalizer
+{
 private:
     Grammar grammar;
 
 public:
-    ChomskyNormalizer(const Grammar& g);
+    ChomskyNormalizer(const Grammar &g);
 
     Grammar removeRecursionAtBeginning();
     Grammar removeLambdaProductions();
@@ -22,8 +23,8 @@ public:
     Grammar removeUnitProductions();
     Grammar removeUselessSymbols();
     Grammar toChomskyNormalForm();
-    set<string> findVariableChain(string& A);
-    set<string> findUnitProductionsVar(string& A);
+    set<string> findVariableChain(string &A);
+    set<string> findUnitProductionsVar(string &A);
     Grammar removeLeftRecursion();
 
 
