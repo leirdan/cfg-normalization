@@ -1,14 +1,12 @@
 #include "../header/grammar.h"
 
-Grammar::Grammar()
-{
+Grammar::Grammar(){
     this->terminals = {};
     this->startSymbol = "";
     this->productions = {};
 }
 
-Grammar::Grammar(string startSymbol, set<string> terminals)
-{
+Grammar::Grammar(string startSymbol, set<string> terminals){
     this->startSymbol = startSymbol;
     this->terminals = terminals;
 }
@@ -50,18 +48,16 @@ void Grammar::removeVariable(const string& A) {
 
 
 void Grammar::addProduction(string A, vector<string> rhs){
-  productions[A].insert(rhs);
-  variables.insert(A);
-}
-
-void Grammar::addProduction(string A, vector<string> rhs)
-{
     productions[A].insert(rhs);
     this->addVariable(A);
 }
 
-void Grammar::removeProduction(string A, vector<string> rhs)
-{
+void Grammar::addVariable(string A){
+    variables.insert(A);
+}
+
+
+void Grammar::removeProduction(string A, vector<string> rhs){
     productions[A].erase(rhs);
     if (productions[A].empty())
     {
@@ -69,13 +65,11 @@ void Grammar::removeProduction(string A, vector<string> rhs)
     }
 }
 
-void Grammar::clearProductions(string A)
-{
+void Grammar::clearProductions(string A){
     productions.erase(A);
 }
 
-set<vector<string> > Grammar::getProductions(string A)
-{
+set<vector<string> > Grammar::getProductions(string A){
     auto it = productions.find(A);
     if (it != productions.end())
     {
@@ -142,8 +136,7 @@ void Grammar::print(ostream &out){
     out << "\n";
 }
 
-Grammar Grammar::clone() const
-{
+Grammar Grammar::clone() const{
     Grammar g2;
     g2.terminals = this->terminals;
     g2.startSymbol = this->startSymbol;
@@ -152,7 +145,6 @@ Grammar Grammar::clone() const
     return g2;
 }
 
-bool Grammar::isVariable(const string &symbol) const
-{
+bool Grammar::isVariable(const string &symbol) const{
     return variables.count(symbol) > 0;
 }
