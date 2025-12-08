@@ -23,10 +23,9 @@ public:
     Grammar removeUnitProductions();
     Grammar removeUselessSymbols();
     Grammar toChomskyNormalForm();
-    set<string> findVariableChain(string &A);
-    set<string> findUnitProductionsVar(string &A);
-    Grammar removeLeftRecursion();
-
+    set<string> findVariableChain(string& A);
+    set<string> findUnitProductionsVar(string& A);
+    set<string> getTerm();
 
     /*
     na main:

@@ -85,7 +85,15 @@ set<string> ChomskyNormalizer::findVoidableVariables()
                 }
             }
         }
+
+        if (allNullable) {
+          voidableVariables.insert(A);
+          changed = true;
+          break;
+        }
+      }
     }
+}
 
     return voidableVariables;
 }
@@ -103,12 +111,70 @@ vector<int> getNullablePositionsRHS(const vector<string> &rhs, set<string> voida
             nullablePositions.push_back(i);
         }
     }
-    // if(nullablePositions.size() > 0){
-    //   //cout << "\nPosicoes anulaveis da producao: " << endl;
-    // }
-    // for(int pos : nullablePositions){
-    //   cout << pos << endl;
-    // }
+    for (auto prod : toRemove){
+        result.removeProduction(A, prod);
+    }
+  }
+
+  return result;
+}
+
+set<string> ChomskyNormalizer::getTerm(){
+  Grammar g = this->grammar.clone();
+    set<string> variables = g.getVariables();
+
+    set<string> term;
+    bool changed = true;
+
+    while (changed) {
+      changed = false;
+
+    for (const string& A : variables) {
+        if (term.count(A)) continue;
+
+        for (const auto& production : g.getProductions(A)) {
+          bool hasTerminal = false;
+          bool allGood = true;
+
+          for (const auto& symbol : production) {
+            if (!g.isVariable(symbol))
+              hasTerminal = true;
+
+            if (g.isVariable(symbol) && !term.count(symbol))
+              allGood = false;
+          }
+
+          if (hasTerminal && allGood) {
+            term.insert(A);
+            changed = true;
+            break;
+          }
+        }
+      }
+    }
+
+    return term;
+}
+
+Grammar ChomskyNormalizer::removeUselessSymbols(){
+  Grammar g = this->grammar.clone();
+  Grammar result = this->grammar.clone();
+  set<string> term = getTerm();
+  set <string> notTerm;
+
+  cout << "term: " << (int)term.size() << endl;
+  for(string s : term){
+    cout << s << endl;
+  }
+
+  set<string> variables = g.getVariables();
+
+  //eliminar todas as variaveis que nao estao em term
+  for(string A : variables){
+    if(!term.count(A)){
+      result.removeVariable(A);
+    }
+  }
 
     return nullablePositions;
 }

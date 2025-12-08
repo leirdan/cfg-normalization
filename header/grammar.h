@@ -25,7 +25,8 @@ public:
     void removeProduction(string A, vector<string> rhs);
     void clearProductions(string A);
     void print(ostream &out);
-    bool isVariable(const string &symbol) const;
+    bool isVariable(const string& symbol) const;
+    void removeVariable(const string& A);
     Grammar clone() const;
 
     set<vector<string>> getProductions(string A);
